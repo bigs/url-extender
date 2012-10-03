@@ -1,6 +1,12 @@
-(ns premiumurlshortener.core)
+(ns premiumurlshortener.core
+  (:use compojure.core
+        premiumurlshortener.views)
+  (:require [compojure.route :as route]
+            [compojure.handler :as handler]
+            [compojure.response :as response]))
 
-(defn foo
-  "I don't do a whole lot."
-  [x]
-  (println x "Hello, World!"))
+(defroutes main-routes
+  (GET "/" [] (index-page)))
+
+(def main (handler/site main))
+
