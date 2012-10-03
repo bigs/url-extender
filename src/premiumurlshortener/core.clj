@@ -10,5 +10,9 @@
   (GET "/" [] (index-page))
   (route/not-found "Page not found"))
 
-(def -main (run-jetty (handler/site main-routes) {:port 3000}))
+(def app (handler/site main-routes))
+
+(defn -main []
+  (let [port (Integer/parseInt (get (System/getenv) "PORT" "8080"))]
+  (run-jetty app {:port port})))
 
