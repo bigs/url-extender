@@ -26,15 +26,18 @@
 (def base-url (get (System/getenv) "BASE_URL" "http://localhost:8080"))
 
 (defn generate-token [url]
+  "Generates a random token guaranteed to be longer than `url`."
   (clojure.string/replace (random/base64 (max (+ (.length url) 1) min-length-token))
     #"(\+|=|/)" "_"))
 
 (defn generate-remove-code []
+  "Generates a random removal code."
   (clojure.string/replace (random/base64 min-length-remove-code)
     #"(\+|=|/)" "_"))
 
 ;; Actions
 (defn translate-url [token]
+  "Fetches the URL corresponding to a token."
   (redis (car/hget token "url")))
 
 (defn generate-unique-url [url]
@@ -68,11 +71,13 @@
     (generate-unique-url url)))
 
 (defn remove-url-from-redis [url token]
+  "Deletes a URL from redis."
   (redis (car/del token))
   (redis (car/del url))
-  "OK.")
+  (str "Deleted URL " url))
 
 (defn remove-url-helper [token code]
+  "Validates removal code. If valid, deletes."
   (let [remove-code (redis (car/hget token "remove"))
         url         (redis (car/hget token "url"))]
     (if (= remove-code code)
@@ -81,6 +86,7 @@
       "Invalid removal code.")))
 
 (defn remove-url [token code]
+  "Attempts to remove a URL from the database."
   (if (= (redis (car/exists token)) 1)
     (remove-url-helper token code)
     (str "URL /" token "does not exist.")))
