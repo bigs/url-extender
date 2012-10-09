@@ -23,6 +23,7 @@
 (def min-length-token 109)
 (def min-length-remove-code 10)
 (def url-ttl 2592000)
+(def base-url (get (System/getenv) "BASE_URL" "http://localhost:8080"))
 
 (defn generate-token [url]
   (clojure.string/replace (random/base64 (max (+ (.length url) 1) min-length-token))
@@ -55,7 +56,8 @@
           (stencil/render-file "templates/url"
                                {"url" url
                                 "remove-code" remove-code
-                                "token" token}))))))
+                                "token" token
+                                "base" base-url}))))))
 
 (defn generate-url [url]
   "Generates a lengthened URL"

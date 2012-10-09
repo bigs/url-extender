@@ -1,9 +1,10 @@
 (ns premiumurlshortener.views
   (:require [premiumurlshortener.url :as url]
-            [compojure.route :as route]))
+            [compojure.route :as route]
+            [stencil.core :as stencil]))
 
 (defn index-page []
-  "Hello, world.")
+  (stencil/render-file "static/index" {}))
 
 (defn translate-url [token]
   (let [translation (url/translate-url token)]
