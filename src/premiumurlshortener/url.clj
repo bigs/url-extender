@@ -3,12 +3,14 @@
             [crypto.random :as random]
             [stencil.core :as stencil]))
 
-;; Define redis connection
+;; System constants
 (def redis-host (get (System/getenv) "REDIS_HOST" "127.0.0.1"))
 (def redis-port (Integer/parseInt (get (System/getenv) "REDIS_PORT" "6379")))
 (def redis-db (Integer/parseInt (get (System/getenv) "REDIS_DB" "0")))
 (def redis-password (get (System/getenv) "REDIS_PASSWORD" nil))
+(def base-url (get (System/getenv) "BASE_URL" "http://localhost:8080"))
 
+;; Define redis connection
 (def redis-pool (car/make-conn-pool))
 (def redis-server (car/make-conn-spec
                     :host redis-host
@@ -20,10 +22,9 @@
 (defmacro redis [& body] `(car/with-conn redis-pool redis-server ~@body))
 
 ;; Helpers
-(def min-length-token 109)
+(def min-length-token (max 1 (- 141 (.length base-url))))
 (def min-length-remove-code 10)
 (def url-ttl 2592000)
-(def base-url (get (System/getenv) "BASE_URL" "http://localhost:8080"))
 
 (defn generate-token [url]
   "Generates a random token guaranteed to be longer than `url`."
