@@ -28,7 +28,8 @@
 
 (defn generate-token [url]
   "Generates a random token guaranteed to be longer than `url`."
-  (clojure.string/replace (random/base64 (max (+ (.length url) 1) min-length-token))
+  (clojure.string/replace
+    (random/base64 (max (+ (.length url) 1) min-length-token))
     #"(\+|=|/)" "_"))
 
 (defn generate-remove-code []
