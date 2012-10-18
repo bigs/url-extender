@@ -42,6 +42,7 @@
   (redis (car/hget token "url")))
 
 (defn decorate-url [url]
+  "Prepend 'http://' to URLs that lack it."
   (if (= (.indexOf url "http://") 0)
     url
     (str "http://" url)))

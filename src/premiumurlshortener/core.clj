@@ -15,6 +15,7 @@
   (GET "/:url" [url] (views/translate-url url))
   ;; Delete a URL.
   (GET "/:url/remove/:code" [url code] (views/remove-url url code))
+  (route/resources "/static")
   (route/not-found "Page not found."))
 
 ;; Ring plugin compliance
