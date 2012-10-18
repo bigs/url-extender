@@ -5,7 +5,7 @@
 
 (defn index-page []
   "Renders the index page."
-  (stencil/render-file "static/index" {}))
+  (slurp "resources/static/index.html"))
 
 (defn translate-url [token]
   "Redirects a 'shortened' URL"
