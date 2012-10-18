@@ -41,10 +41,16 @@
   "Fetches the URL corresponding to a token."
   (redis (car/hget token "url")))
 
+(defn decorate-url [url]
+  (if (= (.indexOf url "http://") 0)
+    url
+    (str "http://" url)))
+
 (defn generate-unique-url [url]
   "Generates a unique translated URL given a URL."
   ;; We only make the removal code once
-  (let [remove-code (generate-remove-code)]
+  (let [remove-code (generate-remove-code)
+        url         (decorate-url url)]
     ;; Then loop over randomly generated URLs until
     ;; we've found one that isn't taken. Efficient. Totally.
     (loop [token (generate-token url)]
