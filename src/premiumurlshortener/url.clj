@@ -37,16 +37,16 @@
   (clojure.string/replace (random/base64 min-length-remove-code)
     #"(\+|=|/)" "_"))
 
-;; Actions
-(defn translate-url [token]
-  "Fetches the URL corresponding to a token."
-  (redis (car/hget token "url")))
-
 (defn decorate-url [url]
   "Prepend 'http://' to URLs that lack it."
   (if (= (.indexOf url "http://") 0)
     url
     (str "http://" url)))
+
+;; Actions
+(defn translate-url [token]
+  "Fetches the URL corresponding to a token."
+  (redis (car/hget token "url")))
 
 (defn url-response [url remove-code token]
   "Generates the response page for URLs."
