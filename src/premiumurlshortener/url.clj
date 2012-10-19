@@ -48,6 +48,14 @@
     url
     (str "http://" url)))
 
+(defn url-response [url remove-code token]
+  "Generates the response page for URLs."
+  (stencil/render-file "templates/url"
+                       {"url" url
+                        "remove-code" remove-code
+                        "token" token
+                        "base" base-url}))
+
 (defn generate-unique-url [url]
   "Generates a unique translated URL given a URL."
   ;; We only make the removal code once
@@ -65,19 +73,18 @@
           (redis (car/set url token))
           (redis (car/expire url url-ttl))
           (redis (car/expire token url-ttl))
-          (stencil/render-file "templates/url"
-                               {"url" url
-                                "remove-code" remove-code
-                                "token" token
-                                "base" base-url}))))))
+          (url-response url remove-code token))))))
 
 (defn generate-url [url]
   "Generates a lengthened URL"
-  (if (= (redis (car/exists url)) 1)
-    ;; If it exsits, return existing url
-    (translate-url (redis (car/get url)))
-    ;; Otherwise, generate a new one
-    (generate-unique-url url)))
+  (let [url (decorate-url url)]
+    (if (= (redis (car/exists url)) 1)
+      ;; If it exsits, return existing url
+      (let [token (redis (car/get url))
+            remove-code (redis (car/hget token "remove"))]
+        (url-response url remove-code token))
+      ;; Otherwise, generate a new one
+      (generate-unique-url url))))
 
 (defn remove-url-from-redis [url token]
   "Deletes a URL from redis."
